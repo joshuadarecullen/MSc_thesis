@@ -1,4 +1,7 @@
-class VAE(nn.Module):
+import torch
+import torch.nn.functional as F
+
+class VAE(torch.nn.Module):
     def __init__(self):
         super(VAE, self).__init__()
 
@@ -9,15 +12,15 @@ class VAE(nn.Module):
         # For the encoder:
         # fc1 transforms the input data to the hidden space
         # fc21 and fc22 transform the hidden space to the parameters of the latent space (mu and logvar)
-        self.fc1 = nn.Linear(input_size, hidden_size)
-        self.fc21 = nn.Linear(hidden_size, latent_size)
-        self.fc22 = nn.Linear(hidden_size, latent_size)
+        self.fc1 = torch.nn.Linear(input_size, hidden_size)
+        self.fc21 = torch.nn.Linear(hidden_size, latent_size)
+        self.fc22 = torch.nn.Linear(hidden_size, latent_size)
 
         # For the decoder:
         # fc3 transforms the latent space back to the hidden space
         # fc4 transforms the hidden space to the output data
-        self.fc3 = nn.Linear(latent_size, hidden_size)
-        self.fc4 = nn.Linear(hidden_size, input_size)
+        self.fc3 = torch.nn.Linear(latent_size, hidden_size)
+        self.fc4 = torch.nn.Linear(hidden_size, input_size)
 
     def encode(self, x):
         # This method passes the input through the encoder.
