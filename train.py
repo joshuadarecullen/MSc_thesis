@@ -1,6 +1,14 @@
 import torch
+import inspect
 import torch.nn.functional as F
 from VAE import VAE as vae
+
+# import sys
+# sys.path.insert(1, '/home/joshua/Documents/university/Dissertation/code/MSc_thesis/conduit/conduit/data/datamodules/audio')
+# from audio import ecoacoustics
+# import conduit
+from conduit.data.datamodules.audio.ecoacoustics import EcoacousticsDataModule
+from conduit.data.datasets.audio.ecoacoustics import Ecoacoustics
 
 # train loop
 def train(model, dataloader, epochs, optimiser, device):
@@ -40,15 +48,19 @@ def loss_function(recon_x, x, mu, logvar):
 
 
 if __name__ == "__main__":
-    if torch.cuda.is_available():
-        device = torch.set_default_device('cuda')
-    else:
-        device = torch.set_default_device('cpu')
+    device = torch.device('cpu')
 
-    model = vae()
+    model_params = {'input_size': 48000, 'hidden_size': 8000, 'latent_size': 160}
+
+    model = vae(**model_params)
     epochs = 10
-    optimiser = torch.optim.Adam(lr=0.001)
+    optimiser = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    '''
-    datalader = 
-    '''
+    eco_data = EcoacousticsDataModule(root='/home/joshua/Documents/university/Dissertation/code/MSc_thesis/data', target_attrs= ['NN'])
+    eco_data._get_audio_splits()
+    # dataloader = eco_data.make_dataloader(ds=None,batch_size=64)
+    # print(len(iter(dataloader))) 
+    # print(inspect.getmembers(dataloader, inspect.isfunction))
+    # Ecoacoustics(root='/home/joshua/Documents/university/Dissertation/code/MSc_thesis/data', download=True, target_attrs=['NN'])
+
+

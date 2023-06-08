@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 
 class VAE(torch.nn.Module):
-    def __init__(self):
+    def __init__(self, input_size=50, hidden_size=10, latent_size=10):
         super(VAE, self).__init__()
 
         # Define the architecture for the encoder and decoder networks.
