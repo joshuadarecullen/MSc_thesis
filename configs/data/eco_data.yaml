@@ -1,6 +1,12 @@
 _target_: src.data.datamodule.EcoacousticsDataModuleEdit
-data_dir: ${paths.data_dir}
-batch_size: 1
-train_val_test_split: [2830, 940, 940]
-num_workers: 8 
-pin_memory: False
+root: ${paths.data_dir}
+segment_len: 0.96*60
+test_prop: 0
+val_prop: 0
+train_batch_size: 1
+#train_val_test_split: [2830, 940, 940]
+#num_workers: 8 
+#pin_memory: False
+target_attrs: ['N1']
+train_transforms: transforms.yaml
+test_transforms: transforms.yaml

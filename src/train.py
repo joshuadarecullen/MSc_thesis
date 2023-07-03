@@ -1,11 +1,12 @@
 from typing import List, Optional, Tuple
 
 import hydra
-import lightning as L
+#import lightning as L
+import pytorch_lightning as pl
 import pyrootutils
 import torch
-from lightning import Callback, LightningDataModule, LightningModule, Trainer
-from lightning.pytorch.loggers import Logger
+from pytorch_lightning import Callback, LightningDataModule, LightningModule, Trainer
+from pytorch_lightning.loggers import Logger
 from omegaconf import DictConfig
 
 pyrootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
@@ -45,8 +46,14 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
     Returns:
         Tuple[dict, dict]: Dict with metrics and dict with all instantiated objects.
     """
+    
+    # set seed for random number generators in pytorch, numpy and python.random
+    if cfg.get("seed"):
+        L.seed_everything(cfg.seed, workers=True)
 
-    pass
+    log.info(f"Instantiating datamodule <{cfg.data._target_}>")
+    datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
+
     
 @hydra.main(version_base="1.3", config_path="../configs", config_name="train.yaml")
 def main(cfg: DictConfig) -> Optional[float]:
@@ -55,15 +62,18 @@ def main(cfg: DictConfig) -> Optional[float]:
     utils.extras(cfg)
 
     # train the model
-    metric_dict, _ = train(cfg)
+    #metric_dict, _ = train(cfg)
+    train(cfg)
 
     # safely retrieve metric value for hydra-based hyperparameter optimization
+    '''
     metric_value = utils.get_metric_value(
         metric_dict=metric_dict, metric_name=cfg.get("optimized_metric")
     )
+    '''
 
     # return optimized metric
-    return metric_value
+    return 0#metric_value
 
 
 if __name__ == "__main__":

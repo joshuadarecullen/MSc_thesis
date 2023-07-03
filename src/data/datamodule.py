@@ -1,5 +1,7 @@
-from typing import List, Tuple, Any, Union, Any, Dict
+from typing import List, Tuple, Any, Union, Any, Dict, Optional
 from conduit.data.datasets.audio.ecoacoustics import Ecoacoustics, SoundscapeAttr
+from conduit.data.datamodules.audio.ecoacoustics import EcoacousticsDataModule
+from conduit.data.datasets.utils import CdtDataLoader
 
 class EcoacousticsDataModuleEdit(EcoacousticsDataModule):
     def prepare_data(self,
