@@ -1,0 +1,6 @@
+_target_: src.data.datamodule.EcoacousticsDataModuleEdit
+data_dir: ${paths.data_dir}
+batch_size: 1
+train_val_test_split: [2830, 940, 940]
+num_workers: 8 
+pin_memory: False
