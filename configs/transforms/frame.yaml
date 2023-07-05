@@ -1,0 +1,7 @@
+
+
+frame:
+    _target_: src.transforms.frame.Frame
+    window_length: 96
+    hop_length: 96
+

@@ -2,11 +2,27 @@ from typing import List, Tuple, Any, Union, Any, Dict, Optional
 from conduit.data.datasets.audio.ecoacoustics import Ecoacoustics, SoundscapeAttr
 from conduit.data.datamodules.audio.ecoacoustics import EcoacousticsDataModule
 from conduit.data.datasets.utils import CdtDataLoader
+from omegaconf import DictConfig
 
+from torch.nn import Sequential
+
+from typing_extensions import override
+import attr
+
+import pyrootutils
+pyrootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
+
+from src.transforms.spectrogram import Spectrogram
+from src.transforms.frame import Frame
+
+@attr.define(kw_only=True)
 class EcoacousticsDataModuleEdit(EcoacousticsDataModule):
+
+    @override
     def prepare_data(self,
                      *args: Any,
                      **kwargs: Any) -> None:
+
         # download the data
         data = Ecoacoustics(
             root=self.root,
@@ -15,6 +31,8 @@ class EcoacousticsDataModuleEdit(EcoacousticsDataModule):
             target_attrs=self.target_attrs,
         )
 
+    '''
+
     def train_dataloader(self, **kwargs) -> CdtDataLoader:
         pass
 
@@ -22,7 +40,8 @@ class EcoacousticsDataModuleEdit(EcoacousticsDataModule):
         pass
 
     def val_dataloader(self, **kwargs) -> CdtDataLoader:
-        pass
+        val_loader = self.make 
+    '''
 
     def teardown(self, stage: Optional[str] = None):
         """Clean up after fit or test."""

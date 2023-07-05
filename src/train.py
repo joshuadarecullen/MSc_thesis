@@ -52,7 +52,44 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
         L.seed_everything(cfg.seed, workers=True)
 
     log.info(f"Instantiating datamodule <{cfg.data._target_}>")
-    datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data)
+    transforms = hydra.utils.instantiate(cfg.transforms)
+    transforms = torch.nn.Sequential(transforms['spectrogram'], transforms['frame'])
+    datamodule: LightningDataModule = hydra.utils.instantiate(cfg.data, train_transforms=transforms,test_transforms=transforms)
+
+    log.info(f"Instantiating model <{cfg.model._target_}>")
+    model: LightningModule = hydra.utils.instantiate(cfg.model)
+
+    log.info(f"Instantiating trainer <{cfg.trainer._target_}>")
+    trainer: Trainer = hydra.utils.instantiate(cfg.trainer, callbacks=callbacks, logger=logger)
+
+    log.info("Instantiating callbacks...")
+    callbacks: List[Callback] = utils.instantiate_callbacks(cfg.get("callbacks"))
+
+    log.info("Instantiating loggers...")
+    logger: List[Logger] = utils.instantiate_loggers(cfg.get("logger"))
+
+    object_dict = {
+        "cfg": cfg,
+        "datamodule": datamodule,
+        "model": model,
+        "callbacks": callbacks,
+        "logger": logger,
+        "trainer": trainer,
+    }
+
+    if logger:
+        log.info("Logging hyperparameters!")
+        utils.log_hyperparameters(object_dict)
+
+    if cfg.get("compile"):
+        log.info("Compiling model!")
+        model = torch.compile(model)
+
+    if cfg.get("train"):
+        log.info("Starting training!")
+        trainer.fit(model=model, datamodule=datamodule, ckpt_path=cfg.get("ckpt_path"))
+
+    return 0,0
 
     
 @hydra.main(version_base="1.3", config_path="../configs", config_name="train.yaml")
@@ -62,8 +99,7 @@ def main(cfg: DictConfig) -> Optional[float]:
     utils.extras(cfg)
 
     # train the model
-    #metric_dict, _ = train(cfg)
-    train(cfg)
+    metric_dict, _ = train(cfg)
 
     # safely retrieve metric value for hydra-based hyperparameter optimization
     '''

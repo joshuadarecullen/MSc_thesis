@@ -1,0 +1,21 @@
+spectrogram:
+    _target_: src.transforms.spectrogram.Spectrogram
+
+
+    # fft hparams
+    sample_rate: 16000
+    stft_window_length_seconds: 0.025
+    stft_hop_length_seconds: 0.010
+    log_offset: 0.001
+    frequency_scale: 'mel'
+
+
+    # mel hparams
+    num_mel_bins: 64
+    min_hz: 125
+    max_hz: 7500
+    mel_break_frequency_hz: 700.0
+    mel_scaling_factor: 1127.0
+    magnitude_scale: 'log'
+
+
